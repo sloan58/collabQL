@@ -53,6 +53,12 @@ type User {
 
     "When the account was last updated."
     updated_at: DateTime!
+
+    "A User is related to many Ucm clusters."
+    ucms: [Ucm!]! @belongsToMany(type: PAGINATOR, defaultCount: 10)
+
+    "The Ucm/User pivot data."
+    pivot: UcmUserPivot
 }
 
 "A Cisco Unified Communications Manager cluster instance."
@@ -77,4 +83,24 @@ type Ucm {
 
     "When the account was last updated."
     updated_at: DateTime!
+
+    "A Ucm is related to many Users."
+    users: [User!]! @belongsToMany(type: PAGINATOR, defaultCount: 10)
+
+    "The Ucm/User pivot data."
+    pivot: UcmUserPivot
+}
+
+type UcmUserPivot {
+    "The UCM pkid for a User"
+    pkid: String
+
+    "The UCM userid for a User"
+    userId: String
+
+    "The UCM service profile for a User"
+    serviceProfile: String
+
+    "Is this the User's home cluster?"
+    homeCluster: Boolean
 }
