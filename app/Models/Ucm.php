@@ -28,4 +28,12 @@ class Ucm extends Model
     {
         return $this->hasMany(Partition::class);
     }
+
+    /**
+     * @return HasMany
+     */
+    public function callingSearchSpaces(): HasMany
+    {
+        return $this->hasMany(CallingSearchSpace::class);
+    }
 }

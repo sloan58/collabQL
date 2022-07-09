@@ -98,6 +98,12 @@ type Ucm {
         name: String @where(operator: "like")
         description: String @where(operator: "like")
     ): [Partition!]! @hasMany
+
+    "The CallingSearchSpaces that reside on this UCM"
+    callingSearchSpaces(
+        name: String @where(operator: "like")
+        description: String @where(operator: "like")
+    ): [CallingSearchSpace!]! @hasMany
 }
 
 type UcmUserPivot {
@@ -125,5 +131,19 @@ type Partition {
     description: String
 
     "The UCM where this Partition lives"
+    ucm: Ucm! @belongsTo
+}
+
+type CallingSearchSpace {
+    "The UCM CallingSearchSpace pkid"
+    pkid: String
+
+    "The CallingSearchSpace name"
+    name: String
+
+    "The CallingSearchSpace description"
+    description: String
+
+    "The UCM where this CallingSearchSpace lives"
     ucm: Ucm! @belongsTo
 }

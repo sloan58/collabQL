@@ -48,6 +48,18 @@ class DatabaseSeeder extends Seeder
                  'name' => sprintf("%s-INTERNAL_PT", strtoupper($abbr)),
                  'description' => sprintf("%s Internal Partition", ucfirst($state)),
              ]);
+
+             foreach(['LOCAL', 'LONG-DISTANCE', 'INTERNATIONAL'] as $ability) {
+                 $ucm->callingSearchSpaces()->create([
+                     'pkid' => uniqid(),
+                     'name' => sprintf("%s-%s_CSS", strtoupper($abbr), $ability),
+                     'description' => sprintf(
+                         "%s %s Calling Search Space",
+                         ucfirst($state),
+                         ucwords(strtolower(str_replace("-", " ", $ability)))
+                     ),
+                 ]);
+             }
          }
     }
 }
