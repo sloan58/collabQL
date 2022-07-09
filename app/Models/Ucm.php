@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -18,5 +19,13 @@ class Ucm extends Model
         return $this->belongsToMany(User::class)->withPivot([
             'pkid', 'userId', 'serviceProfile', 'homeCluster'
         ]);
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function partitions(): HasMany
+    {
+        return $this->hasMany(Partition::class);
     }
 }

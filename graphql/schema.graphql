@@ -92,6 +92,12 @@ type Ucm {
 
     "The Ucm/User pivot data."
     ucmUserPivot: UcmUserPivot! @rename(attribute: "pivot")
+
+    "The Partitions that reside on this UCM"
+    partitions(
+        name: String @where(operator: "like")
+        description: String @where(operator: "like")
+    ): [Partition!]! @hasMany
 }
 
 type UcmUserPivot {
@@ -106,4 +112,18 @@ type UcmUserPivot {
 
     "Is this the User's home cluster?"
     homeCluster: Boolean
+}
+
+type Partition {
+    "The UCM Partition pkid"
+    pkid: String
+
+    "The Partition name"
+    name: String
+
+    "The Partition description"
+    description: String
+
+    "The UCM where this Partition lives"
+    ucm: Ucm! @belongsTo
 }

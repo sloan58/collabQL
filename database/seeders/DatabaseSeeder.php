@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Ucm;
 use App\Models\User;
+use App\Models\Partition;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -33,7 +34,7 @@ class DatabaseSeeder extends Seeder
                      'manager',
                      'employee'
                  ];
-                 $spName = sprintf('%s-%s-sp', $abbr, $spTypes[rand(0,2)]);
+                 $spName = sprintf('%s-%s-sp', strtolower($abbr), $spTypes[rand(0,2)]);
                  $user->ucms()->attach($ucm, [
                      'pkid' => uniqid(),
                      'userid' => $user->name,
@@ -41,6 +42,12 @@ class DatabaseSeeder extends Seeder
                      'serviceProfile' => $isHomeCluster ? $spName : ''
                  ]);
              });
+
+             $ucm->partitions()->create([
+                 'pkid' => uniqid(),
+                 'name' => sprintf("%s-INTERNAL_PT", strtoupper($abbr)),
+                 'description' => sprintf("%s Internal Partition", ucfirst($state)),
+             ]);
          }
     }
 }
