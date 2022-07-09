@@ -55,10 +55,13 @@ type User {
     updated_at: DateTime!
 
     "A User is related to many Ucm clusters."
-    ucms: [Ucm!]! @belongsToMany(type: PAGINATOR, defaultCount: 10)
-
-    "The Ucm/User pivot data."
-    pivot: UcmUserPivot
+    ucms (
+        name: String @where(operator: "like")
+        ipAddress: String @where(operator: "like")
+        homeCluster: Boolean @eq(key: "homeCluster")
+        username: String @where(operator: "like")
+        version: String @where(operator: "like")
+    ): [Ucm!]! @belongsToMany(type: PAGINATOR, defaultCount: 10)
 }
 
 "A Cisco Unified Communications Manager cluster instance."
@@ -88,7 +91,7 @@ type Ucm {
     users: [User!]! @belongsToMany(type: PAGINATOR, defaultCount: 10)
 
     "The Ucm/User pivot data."
-    pivot: UcmUserPivot
+    ucmUserPivot: UcmUserPivot! @rename(attribute: "pivot")
 }
 
 type UcmUserPivot {
