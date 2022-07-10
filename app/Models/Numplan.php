@@ -3,14 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Partition extends Model
+class Numplan extends Model
 {
     use HasFactory;
+
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'numplans';
 
     /**
      * The attributes that are mass assignable.
@@ -19,9 +24,11 @@ class Partition extends Model
      */
     protected $fillable = [
         'pkid',
-        'name',
+        'pattern',
         'description',
+        'patternUsage',
         'ucm_id',
+        'partition_id',
     ];
 
     /**
@@ -33,18 +40,10 @@ class Partition extends Model
     }
 
     /**
-     * @return BelongsToMany
+     * @return BelongsTo
      */
-    public function callingSearchSpaces(): BelongsToMany
+    public function partition(): BelongsTo
     {
-        return $this->belongsToMany(CallingSearchSpace::class)->withPivot(['index']);
-    }
-
-    /**
-     * @return HasMany
-     */
-    public function numplans(): HasMany
-    {
-        return $this->hasMany(Numplan::class);
+        return $this->belongsTo(Partition::class);
     }
 }

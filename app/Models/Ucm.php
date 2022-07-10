@@ -44,4 +44,20 @@ class Ucm extends Model
     {
         return $this->hasMany(DevicePool::class);
     }
+
+    /**
+     * @return HasMany
+     */
+    public function numplans(): HasMany
+    {
+        return $this->hasMany(Numplan::class);
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function lines(): HasMany
+    {
+        return $this->hasMany(Line::class);
+    }
 }

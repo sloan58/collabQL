@@ -104,6 +104,12 @@ type Ucm {
         name: String @where(operator: "like")
         description: String @where(operator: "like")
     ): [CallingSearchSpace!]! @hasMany
+
+    "The Lines that reside on this UCM"
+    lines(
+        pattern: String @where(operator: "like")
+        description: String @where(operator: "like")
+    ): [Line!]! @hasMany
 }
 
 type UcmUserPivot {
@@ -179,5 +185,22 @@ type DevicePools {
     name: String
 
     "The UCM where this CallingSearchSpace lives"
+    ucm: Ucm! @belongsTo
+}
+
+type Line {
+    "The Line pkid"
+    pkid: String
+
+    "The Line pattern"
+    pattern: String
+
+    "The Line description"
+    description: String
+
+    "The Line Partition"
+    partition: Partition! @belongsTo
+
+    "The UCM where this Line lives"
     ucm: Ucm! @belongsTo
 }

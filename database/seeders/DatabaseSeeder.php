@@ -19,7 +19,8 @@ class DatabaseSeeder extends Seeder
     {
          \App\Models\User::factory(1000)->create();
 
-         foreach(config('states') as $abbr => $state) {
+         $states = config('states');
+         foreach($states as $abbr => $state) {
              $state = str_replace(' ', '-', $state);
              $state = strtolower($state);
 
@@ -85,6 +86,31 @@ class DatabaseSeeder extends Seeder
                  $ucm->devicePools()->create([
                      'pkid' => uniqid(),
                      'name' => sprintf('%s-%s_DP', $state, $type)
+                 ]);
+             }
+
+
+             $stateCode = str_pad(array_search($abbr, array_keys($states)) + 1, 2, 0);
+             $jobRoles = [
+                 'Accounting',
+                 'Human Resources',
+                 'Technical Support',
+                 'Logistics',
+                 'Executive Staff'
+             ];
+
+             foreach(range(1000, 1500) as $lastFour) {
+                 $internalExtension = sprintf('8%s%s', (string) $stateCode, $lastFour);
+                 $fullDID = sprintf('5555%s', substr($internalExtension, -6));
+                 $ucm->lines()->create([
+                     'pkid' => uniqid(),
+                     'pattern' => $internalExtension,
+                     'description' => sprintf('+1%s-%s-%s', $fullDID, fake()->name(), $jobRoles[array_rand($jobRoles)]),
+                     'patternUsage' => 'Device',
+                     'partition_id' => Partition::where(
+                         'name',
+                         sprintf("%s-INTERNAL_PT", strtoupper($abbr))
+                     )->first()->id
                  ]);
              }
          }
