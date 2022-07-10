@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Ucm;
 use App\Models\User;
 use App\Models\Partition;
+use App\Models\DevicePool;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -78,6 +79,13 @@ class DatabaseSeeder extends Seeder
                          ]
                      );
                  }
+             }
+
+             foreach(['TRUNK', 'PHONE', 'GATEWAY'] as $type) {
+                 $ucm->devicePools()->create([
+                     'pkid' => uniqid(),
+                     'name' => sprintf('%s-%s_DP', $state, $type)
+                 ]);
              }
          }
     }

@@ -36,4 +36,12 @@ class Ucm extends Model
     {
         return $this->hasMany(CallingSearchSpace::class);
     }
+
+    /**
+     * @return HasMany
+     */
+    public function devicePools(): HasMany
+    {
+        return $this->hasMany(DevicePool::class);
+    }
 }

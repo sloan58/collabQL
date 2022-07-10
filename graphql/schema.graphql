@@ -121,7 +121,7 @@ type UcmUserPivot {
 }
 
 type Partition {
-    "The UCM Partition pkid"
+    "The Partition pkid"
     pkid: String
 
     "The Partition name"
@@ -144,7 +144,7 @@ type Partition {
 }
 
 type CallingSearchSpace {
-    "The UCM CallingSearchSpace pkid"
+    "The CallingSearchSpace pkid"
     pkid: String
 
     "The CallingSearchSpace name"
@@ -156,17 +156,28 @@ type CallingSearchSpace {
     "The UCM where this CallingSearchSpace lives"
     ucm: Ucm! @belongsTo
 
-    "A Calling Search Space has one or more Partitions assigned"
+    "A CallingSearchSpace has one or more Partitions assigned"
     partitions(
     name: String @where(operator: "like")
     description: String @where(operator: "like")
     ): [Partition!]! @belongsToMany
 
-    "The Calling Search Space/Partition pivot data."
+    "The CallingSearchSpace/Partition pivot data."
     cssPartitionPivot: CssPartitionPivot! @rename(attribute: "pivot")
 }
 
 type CssPartitionPivot {
     "The position of the Partition inside the Calling Search Space"
     index: Int
+}
+
+type DevicePools {
+    "The Device Pool pkid"
+    pkid: String
+
+    "The Device Pool name"
+    name: String
+
+    "The UCM where this CallingSearchSpace lives"
+    ucm: Ucm! @belongsTo
 }
