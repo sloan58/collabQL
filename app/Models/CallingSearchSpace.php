@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class CallingSearchSpace extends Model
 {
@@ -28,5 +29,13 @@ class CallingSearchSpace extends Model
     public function ucm(): BelongsTo
     {
         return $this->belongsTo(Ucm::class);
+    }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function partitions(): BelongsToMany
+    {
+        return $this->belongsToMany(Partition::class)->withPivot(['index']);
     }
 }

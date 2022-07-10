@@ -43,14 +43,22 @@ class DatabaseSeeder extends Seeder
                  ]);
              });
 
-             $ucm->partitions()->create([
-                 'pkid' => uniqid(),
-                 'name' => sprintf("%s-INTERNAL_PT", strtoupper($abbr)),
-                 'description' => sprintf("%s Internal Partition", ucfirst($state)),
-             ]);
+             $abilities = ['INTERNAL', 'LOCAL', 'LONG-DISTANCE', 'INTERNATIONAL'];
 
-             foreach(['LOCAL', 'LONG-DISTANCE', 'INTERNATIONAL'] as $ability) {
-                 $ucm->callingSearchSpaces()->create([
+             foreach($abilities as $ability) {
+                 $ucm->partitions()->create([
+                     'pkid' => uniqid(),
+                     'name' => sprintf("%s-%s_PT", strtoupper($abbr), $ability),
+                     'description' => sprintf(
+                         "%s %s Partition",
+                         ucfirst($state),
+                         ucwords(strtolower(str_replace("-", " ", $ability)))
+                     ),
+                 ]);
+             }
+
+             foreach($abilities as $key => $ability) {
+                 $css = $ucm->callingSearchSpaces()->create([
                      'pkid' => uniqid(),
                      'name' => sprintf("%s-%s_CSS", strtoupper($abbr), $ability),
                      'description' => sprintf(
@@ -59,6 +67,17 @@ class DatabaseSeeder extends Seeder
                          ucwords(strtolower(str_replace("-", " ", $ability)))
                      ),
                  ]);
+
+                 foreach(array_slice($abilities, 0, $key + 1) as $innerKey => $partitionAbility) {
+                     $css->partitions()->attach(
+                         Partition::where([
+                             'ucm_id' => $ucm->id,
+                             'name' => sprintf("%s-%s_PT", strtoupper($abbr), $partitionAbility),
+                         ])->first(), [
+                             'index' => $innerKey + 1
+                         ]
+                     );
+                 }
              }
          }
     }

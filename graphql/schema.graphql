@@ -132,6 +132,15 @@ type Partition {
 
     "The UCM where this Partition lives"
     ucm: Ucm! @belongsTo
+
+    "A Partition is assigned to many CallingSearchSpaces"
+    callingSearchSpaces(
+        name: String @where(operator: "like")
+        description: String @where(operator: "like")
+    ): [CallingSearchSpace!]! @belongsToMany
+
+    "The Calling Search Space/Partition pivot data."
+    cssPartitionPivot: CssPartitionPivot! @rename(attribute: "pivot")
 }
 
 type CallingSearchSpace {
@@ -146,4 +155,18 @@ type CallingSearchSpace {
 
     "The UCM where this CallingSearchSpace lives"
     ucm: Ucm! @belongsTo
+
+    "A Calling Search Space has one or more Partitions assigned"
+    partitions(
+    name: String @where(operator: "like")
+    description: String @where(operator: "like")
+    ): [Partition!]! @belongsToMany
+
+    "The Calling Search Space/Partition pivot data."
+    cssPartitionPivot: CssPartitionPivot! @rename(attribute: "pivot")
+}
+
+type CssPartitionPivot {
+    "The position of the Partition inside the Calling Search Space"
+    index: Int
 }
