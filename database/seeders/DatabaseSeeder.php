@@ -17,17 +17,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-         User::factory(1000)->create();
-         $users = User::all();
+//         User::factory(1000)->create();
+//         $users = User::all();
 
          $states = config('states');
 
          foreach($states as $abbr => $state) {
-             $totalUsers = User::count();
-             $stateArrayIndex = array_search($abbr, array_keys($states));
-             $statesCount = count($states);
-
-             $clusterUsers = $users->slice($stateArrayIndex, ceil($totalUsers / $statesCount));
+             $clusterUsers = User::factory(20)->raw();
+             $eloquentUsers = collect();
+//             $totalUsers = User::count();
+//             $stateArrayIndex = array_search($abbr, array_keys($states));
+//             $statesCount = count($states);
+//
+//             $clusterUsers = $users->slice($stateArrayIndex, ceil($totalUsers / $statesCount));
 
              $state = str_replace(' ', '-', $state);
              $state = strtolower($state);
@@ -36,22 +38,22 @@ class DatabaseSeeder extends Seeder
                  [ 'name' => sprintf('ucm-%s-cluster', $state) ]
              );
 
-             User::each(function($user) use ($abbr, $state, $ucm) {
-                 $homeCluster = array_rand(config('states'));
-                 $isHomeCluster = $abbr === $homeCluster;
+             foreach($clusterUsers as $clusterUser) {
+                 $newUser = User::create($clusterUser);
+                 $eloquentUsers->push($newUser);
                  $spTypes = [
                      'executive',
                      'manager',
                      'employee'
                  ];
                  $spName = sprintf('%s-%s-sp', strtolower($abbr), $spTypes[rand(0,2)]);
-                 $user->ucms()->attach($ucm, [
+                 $newUser->ucms()->attach($ucm, [
                      'pkid' => uniqid(),
-                     'userid' => $user->name,
-                     'homeCluster' => $isHomeCluster,
-                     'serviceProfile' => $isHomeCluster ? $spName : ''
+                     'userid' => $newUser->name,
+                     'homeCluster' => true,
+                     'serviceProfile' => $spName
                  ]);
-             });
+             }
 
              $abilities = ['INTERNAL', 'LOCAL', 'LONG-DISTANCE', 'INTERNATIONAL'];
 
@@ -98,7 +100,7 @@ class DatabaseSeeder extends Seeder
              }
 
 
-             $stateCode = str_pad($stateArrayIndex + 1, 2, 0);
+             $stateCode = str_pad(array_search($abbr, $states) + 1, 2, 0);
              $jobRoles = [
                  'Accounting',
                  'Human Resources',
@@ -108,7 +110,7 @@ class DatabaseSeeder extends Seeder
              ];
 
 
-             foreach ($clusterUsers as $index => $user) {
+             foreach ($eloquentUsers as $index => $user) {
                  $internalExtension = sprintf('8%s10%s', (string) $stateCode, str_pad($index, 2, STR_PAD_LEFT));
                  $fullDID = sprintf('+15555%s', substr($internalExtension, -6));
                  $ucm->lines()->create([
