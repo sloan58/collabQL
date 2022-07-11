@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
              $stateArrayIndex = array_search($abbr, array_keys($states));
              $statesCount = count($states);
 
-             $clusterUsers = $users->slice($stateArrayIndex, $totalUsers / $statesCount);
+             $clusterUsers = $users->slice($stateArrayIndex, ceil($totalUsers / $statesCount));
 
              $state = str_replace(' ', '-', $state);
              $state = strtolower($state);
@@ -107,13 +107,14 @@ class DatabaseSeeder extends Seeder
                  'Executive Staff'
              ];
 
-             foreach(range(1000, 1500) as $lastFour) {
-                 $internalExtension = sprintf('8%s%s', (string) $stateCode, $lastFour);
-                 $fullDID = sprintf('5555%s', substr($internalExtension, -6));
+
+             foreach ($clusterUsers as $index => $user) {
+                 $internalExtension = sprintf('8%s10%s', (string) $stateCode, str_pad($index, 2, STR_PAD_LEFT));
+                 $fullDID = sprintf('+15555%s', substr($internalExtension, -6));
                  $ucm->lines()->create([
                      'pkid' => uniqid(),
                      'pattern' => $internalExtension,
-                     'description' => sprintf('+1%s-%s-%s', $fullDID, fake()->name(), $jobRoles[array_rand($jobRoles)]),
+                     'description' => sprintf('%s-%s-%s', $fullDID, $user->name, $jobRoles[array_rand($jobRoles)]),
                      'patternUsage' => 'Device',
                      'partition_id' => Partition::where(
                          'name',
