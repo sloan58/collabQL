@@ -17,10 +17,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-         \App\Models\User::factory(1000)->create();
+         User::factory(1000)->create();
+         $users = User::all();
 
          $states = config('states');
+
          foreach($states as $abbr => $state) {
+             $totalUsers = User::count();
+             $stateArrayIndex = array_search($abbr, array_keys($states));
+             $statesCount = count($states);
+
+             $clusterUsers = $users->slice($stateArrayIndex, $totalUsers / $statesCount);
+
              $state = str_replace(' ', '-', $state);
              $state = strtolower($state);
 
@@ -90,7 +98,7 @@ class DatabaseSeeder extends Seeder
              }
 
 
-             $stateCode = str_pad(array_search($abbr, array_keys($states)) + 1, 2, 0);
+             $stateCode = str_pad($stateArrayIndex + 1, 2, 0);
              $jobRoles = [
                  'Accounting',
                  'Human Resources',
