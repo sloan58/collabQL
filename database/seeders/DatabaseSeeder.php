@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Ucm;
 use App\Models\User;
+use App\Models\Phone;
 use App\Models\Partition;
 use App\Models\DevicePool;
 use Illuminate\Database\Seeder;
@@ -106,22 +107,35 @@ class DatabaseSeeder extends Seeder
                  'Human Resources',
                  'Technical Support',
                  'Logistics',
-                 'Executive Staff'
+                 'Executive Assistant',
+                 'Vice President',
+                 'President',
+                 'Contractor',
+                 'Marketing',
+                 'Sales'
              ];
 
 
              foreach ($eloquentUsers as $index => $user) {
                  $internalExtension = sprintf('8%s10%s', (string) $stateCode, str_pad($index, 2, STR_PAD_LEFT));
                  $fullDID = sprintf('+15555%s', substr($internalExtension, -6));
+                 $jobRole = $jobRoles[array_rand($jobRoles)];
                  $ucm->lines()->create([
                      'pkid' => uniqid(),
                      'pattern' => $internalExtension,
-                     'description' => sprintf('%s-%s-%s', $fullDID, $user->name, $jobRoles[array_rand($jobRoles)]),
+                     'description' => sprintf('%s-%s-%s', $fullDID, $user->name, $jobRole),
                      'patternUsage' => 'Device',
                      'partition_id' => Partition::where(
                          'name',
                          sprintf("%s-INTERNAL_PT", strtoupper($abbr))
                      )->first()->id
+                 ]);
+
+                 $phoneDescription = sprintf('%s-%s-%s', $abbr, $user->name, $jobRole);
+
+                 Phone::factory()->create([
+                     'description' => $phoneDescription,
+                     'ucm_id' => $ucm->id
                  ]);
              }
          }

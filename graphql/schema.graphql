@@ -93,6 +93,19 @@ type Ucm {
     "The Ucm/User pivot data."
     ucmUserPivot: UcmUserPivot! @rename(attribute: "pivot")
 
+    "The Phones that reside on this UCM"
+    phones(
+        name: String @where(operator: "like")
+        description: String @where(operator: "like")
+        model: String @where(operator: "like")
+        ipAddress: String @where(operator: "like")
+        status: String @where(operator: "like")
+        registeredWith: String @where(operator: "like")
+        protocol: String @where(operator: "like")
+        activeLoad: String @where(operator: "like")
+        inactiveLoad: String @where(operator: "like")
+    ): [Phone!]! @hasMany
+
     "The Partitions that reside on this UCM"
     partitions(
         name: String @where(operator: "like")
@@ -104,6 +117,11 @@ type Ucm {
         name: String @where(operator: "like")
         description: String @where(operator: "like")
     ): [CallingSearchSpace!]! @hasMany
+
+    "The CallingSearchSpaces that reside on this UCM"
+    devicePools(
+        name: String @where(operator: "like")
+    ): [DevicePool!]! @hasMany
 
     "The Lines that reside on this UCM"
     lines(
@@ -177,7 +195,7 @@ type CssPartitionPivot {
     index: Int
 }
 
-type DevicePools {
+type DevicePool {
     "The Device Pool pkid"
     pkid: String
 
@@ -202,5 +220,46 @@ type Line {
     partition: Partition! @belongsTo
 
     "The UCM where this Line lives"
+    ucm: Ucm! @belongsTo
+}
+
+type Phone {
+    "The Phone pkid"
+    pkid: String
+
+    "The Phone name"
+    name: String
+
+    "The Phone description"
+    description: String
+
+    "The Phone model"
+    model: String
+
+    "The Phone IP Address"
+    ipAddress: String
+
+    "The Phone registration Status"
+    status: String
+
+    "The UCM Node that the Phone was last registered with"
+    status: String
+
+    "The Phone registration protocol"
+    protocol: String
+
+    "The Phone active firmware load"
+    activeLoad: String
+
+    "The Phone inactive firmware load"
+    inactiveLoad: String
+
+    "The Phone DevicePool"
+    devicePool: DevicePool @belongsTo
+
+    "The Phone CallingSearchSpace"
+    callingSearchSpace: CallingSearchSpace @belongsTo
+
+    "The Phone Ucm"
     ucm: Ucm! @belongsTo
 }

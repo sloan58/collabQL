@@ -60,4 +60,12 @@ class Ucm extends Model
     {
         return $this->hasMany(Line::class);
     }
+
+    /**
+     * @return HasMany
+     */
+    public function phones(): HasMany
+    {
+        return $this->hasMany(Phone::class);
+    }
 }
