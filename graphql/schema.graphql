@@ -219,6 +219,9 @@ type Line {
     "The Line Partition"
     partition: Partition! @belongsTo
 
+    "The Line Phone assignments"
+    phones: [Phone] @belongsToMany
+
     "The UCM where this Line lives"
     ucm: Ucm! @belongsTo
 }
@@ -253,6 +256,9 @@ type Phone {
 
     "The Phone inactive firmware load"
     inactiveLoad: String
+
+    "The Phone Lines"
+    lines: [Line] @belongsToMany
 
     "The Phone DevicePool"
     devicePool: DevicePool @belongsTo

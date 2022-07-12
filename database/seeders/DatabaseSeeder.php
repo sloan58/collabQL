@@ -18,19 +18,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-//         User::factory(1000)->create();
-//         $users = User::all();
-
          $states = config('states');
 
          foreach($states as $abbr => $state) {
              $clusterUsers = User::factory(20)->raw();
              $eloquentUsers = collect();
-//             $totalUsers = User::count();
-//             $stateArrayIndex = array_search($abbr, array_keys($states));
-//             $statesCount = count($states);
-//
-//             $clusterUsers = $users->slice($stateArrayIndex, ceil($totalUsers / $statesCount));
 
              $state = str_replace(' ', '-', $state);
              $state = strtolower($state);
@@ -96,7 +88,7 @@ class DatabaseSeeder extends Seeder
              foreach(['TRUNK', 'PHONE', 'GATEWAY'] as $type) {
                  $ucm->devicePools()->create([
                      'pkid' => uniqid(),
-                     'name' => sprintf('%s-%s_DP', $state, $type)
+                     'name' => sprintf('%s-%s_DP', $abbr, $type)
                  ]);
              }
 
@@ -120,7 +112,7 @@ class DatabaseSeeder extends Seeder
                  $internalExtension = sprintf('8%s10%s', (string) $stateCode, str_pad($index, 2, STR_PAD_LEFT));
                  $fullDID = sprintf('+15555%s', substr($internalExtension, -6));
                  $jobRole = $jobRoles[array_rand($jobRoles)];
-                 $ucm->lines()->create([
+                 $line = $ucm->lines()->create([
                      'pkid' => uniqid(),
                      'pattern' => $internalExtension,
                      'description' => sprintf('%s-%s-%s', $fullDID, $user->name, $jobRole),
@@ -133,9 +125,18 @@ class DatabaseSeeder extends Seeder
 
                  $phoneDescription = sprintf('%s-%s-%s', $abbr, $user->name, $jobRole);
 
-                 Phone::factory()->create([
+                 $phone = Phone::factory()->raw([
                      'description' => $phoneDescription,
-                     'ucm_id' => $ucm->id
+                     'ucm_id' => $ucm->id,
+                     'device_pool_id' => $ucm->devicePools()->where('name', 'like', '%PHONE%')->first()->id,
+                     'calling_search_space_id' => $ucm->callingSearchSpaces()->first()->id
+                 ]);
+
+                 $phone = Phone::create($phone);
+                 $phone->lines()->attach($line, [
+                     'pkid' => uniqid(),
+                    'numplanindex' => '1',
+                    'ucm_id' => $ucm->id
                  ]);
              }
          }
